@@ -294,7 +294,7 @@
       line-height: 1.4;
       margin-bottom: 8px;
       display: -webkit-box;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
@@ -336,7 +336,7 @@
 
   <div class="search-bar">
     <span class="icon">🔍</span>
-    <input type="text" id="searchInput" placeholder="タイトル・説明・タグで検索…">
+    <input type="text" id="searchInput" placeholder="選手名・大会名で検索...">
   </div>
 
   <div class="belt-filter" id="beltFilter">
@@ -409,8 +409,7 @@ function renderGrid() {
     if (activeBelt !== "all" && v.belt !== activeBelt) return false;
     if (activeTags.size > 0 && ![...activeTags].every(t => v.tags.includes(t))) return false;
     if (kw) {
-      const haystack = (v.title + v.description + v.tags.join(" ")).toLowerCase();
-      if (!haystack.includes(kw)) return false;
+      if (!v.title.toLowerCase().includes(kw)) return false;
     }
     return true;
   });
@@ -446,7 +445,7 @@ function renderGrid() {
       <div class="card-body">
         <div class="card-title">${v.title}</div>
         <div class="card-desc">${v.description}</div>
-        <div class="card-tags">${v.tags.map(t => `<span class="tag">#${t}</span>`).join("")}</div>
+        <div class="card-tags">${v.tags.slice(0, 3).map(t => `<span class="tag">#${t}</span>`).join("")}</div>
       </div>
     `;
     grid.appendChild(a);
