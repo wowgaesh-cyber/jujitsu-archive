@@ -292,11 +292,26 @@
       font-size: 0.72rem;
       color: var(--text-muted);
       line-height: 1.4;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      cursor: pointer;
+    }
+
+    .card-desc.expanded {
+      display: block;
+      -webkit-line-clamp: unset;
+      overflow: visible;
+    }
+
+    .desc-toggle {
+      font-size: 0.68rem;
+      color: var(--accent);
+      cursor: pointer;
+      margin-bottom: 8px;
+      user-select: none;
     }
 
     .card-tags {
@@ -478,9 +493,26 @@ function renderGrid() {
       <div class="card-body">
         <div class="card-title">${title}</div>
         <div class="card-desc">${v.description}</div>
+        <div class="desc-toggle">▼ 続きを読む</div>
         <div class="card-tags">${v.tags.slice(0, 3).map(t => `<span class="tag">#${t}</span>`).join("")}</div>
       </div>
     `;
+
+    const desc = a.querySelector(".card-desc");
+    const toggle = a.querySelector(".desc-toggle");
+    toggle.addEventListener("click", e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const expanded = desc.classList.toggle("expanded");
+      toggle.textContent = expanded ? "▲ 閉じる" : "▼ 続きを読む";
+    });
+    desc.addEventListener("click", e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const expanded = desc.classList.toggle("expanded");
+      toggle.textContent = expanded ? "▲ 閉じる" : "▼ 続きを読む";
+    });
+
     grid.appendChild(a);
   });
 }

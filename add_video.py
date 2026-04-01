@@ -101,7 +101,7 @@ def analyze_with_gemini(youtube_url: str) -> dict:
 
 {{
   "description": "試合の流れを3〜4文の日本語で説明。序盤・中盤・終盤の展開と勝敗を含める。メタデータが少ない場合は内容から推測して補完する。",
-  "tags": "最重要タグ3個をカンマ区切りで（例: 青帯,スイープ,チョーク）"
+  "tags": "最重要タグ3個をカンマ区切りで（例: 青帯,スイープ,チョーク）。「柔術」「ブラジリアン柔術」「BJJ」はタグに含めないこと。"
 }}"""
 
     response = client.models.generate_content(
