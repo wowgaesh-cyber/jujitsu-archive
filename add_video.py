@@ -15,7 +15,8 @@ import subprocess
 import sys
 from datetime import date
 
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 # ----------------------------------------------------------------
 # 定数
@@ -55,8 +56,7 @@ def analyze_with_gemini(youtube_url: str) -> dict:
     if not api_key:
         sys.exit("エラー: 環境変数 GEMINI_API_KEY が設定されていません。")
 
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel("gemini-1.5-pro")
+    client = genai.Client(api_key=api_key)
 
     prompt = """この柔術の試合動画を日本語で解析してください。
 以下のJSON形式のみで返答してください。余分なテキストは不要です。
@@ -66,13 +66,16 @@ def analyze_with_gemini(youtube_url: str) -> dict:
   "tags": "最重要タグ3個をカンマ区切りで（例: 青帯,スイープ,チョーク）"
 }"""
 
-    response = model.generate_content(
-        [
-            prompt,
-            genai.types.Part(
-                file_data=genai.types.FileData(file_uri=youtube_url)
-            ),
-        ]
+    response = client.models.generate_content(
+        model="gemini-2.0-flash-lite",
+        contents=types.Content(
+            parts=[
+                types.Part(text=prompt),
+                types.Part(
+                    file_data=types.FileData(file_uri=youtube_url, mime_type="video/*")
+                ),
+            ]
+        ),
     )
 
     text = response.text.strip()
