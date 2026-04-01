@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git remote:*)",
+      "Bash(git push:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(pip install:*)",
+      "Bash(pip3 install:*)",
+      "Bash(python3:*)",
+      "Bash(GEMINI_API_KEY=\"AIzaSyBmFgJo97tG3Ir_QayPLSsIHS4fo_6qWxE\" python3 add_video.py https://youtu.be/7Tn7zpRBuMk --belt 青帯)",
+      "Bash(GEMINI_API_KEY=\"AIzaSyBmFgJo97tG3Ir_QayPLSsIHS4fo_6qWxE\" python3 -c \"\nfrom google import genai\nclient = genai.Client\\(api_key='AIzaSyBmFgJo97tG3Ir_QayPLSsIHS4fo_6qWxE'\\)\nfor m in client.models.list\\(\\):\n    if 'generateContent' in \\(m.supported_actions or []\\):\n        print\\(m.name\\)\n\")",
+      "Bash(GEMINI_API_KEY=\"AIzaSyDJYDOxPPKTBNVIt2NNILmQ4D3E4qiH4P0\" python3 add_video.py https://youtu.be/7Tn7zpRBuMk --belt 青帯)",
+      "Bash(GEMINI_API_KEY=\"AIzaSyCpbDpqLpm0Cn9NEUk14J3G2muAZFx0CiM\" python3 add_video.py https://youtu.be/7Tn7zpRBuMk --belt 青帯)",
+      "Bash(GEMINI_API_KEY=\"AIzaSyCO3NwYCk3HCpsgTc1piEDdAN3AmHQX8UY\" python3 add_video.py https://youtu.be/7Tn7zpRBuMk --belt 青帯)",
+      "Bash(GEMINI_API_KEY=\"AIzaSyCO3NwYCk3HCpsgTc1piEDdAN3AmHQX8UY\" python3 -c \"\nfrom google import genai\nclient = genai.Client\\(api_key='AIzaSyCO3NwYCk3HCpsgTc1piEDdAN3AmHQX8UY'\\)\nresponse = client.models.generate_content\\(\n    model='gemini-2.5-flash',\n    contents='「テスト」とだけ答えてください'\n\\)\nprint\\(response.text\\)\n\")"
+    ]
+  }
+}
