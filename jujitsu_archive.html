@@ -363,7 +363,6 @@
 const VIDEOS = [
   {
     id: 1,
-    title: "大会名不明_青帯_白道着 vs 黒道着",
     description: "白道着の選手が序盤に引き込んでガードを作り、下から相手をコントロールする展開で始まります。中盤で白道着の選手がスイープを成功させてトップポジションを奪取し、強いプレッシャーをかけました。最後はトップから絞め技を極め、黒道着の選手からタップアウトを奪って白道着の選手が勝利しました。",
     belt: "blue",
     tags: ["青帯", "オープンガード", "スイープ", "トップポジション", "絞め技", "タップアウト"],
@@ -374,9 +373,29 @@ const VIDEOS = [
 ];
 // ============================================================
 
+const YOUTUBE_API_KEY = "AIzaSyDE7yC1CBY1SOlSASOV0PT1Iidc5TIoeqc";
+
 const BELT_LABEL = {
   white: "白帯", blue: "青帯", purple: "紫帯", brown: "茶帯", black: "黒帯"
 };
+
+// YouTubeのURLから動画IDを抽出
+function extractVideoId(url) {
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+// YouTube Data API v3で動画タイトルを一括取得
+async function fetchYouTubeTitles() {
+  const ids = VIDEOS.map(v => extractVideoId(v.youtube)).filter(Boolean);
+  if (ids.length === 0) return {};
+  const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${ids.join(",")}&key=${YOUTUBE_API_KEY}`;
+  const res = await fetch(url);
+  const json = await res.json();
+  const map = {};
+  (json.items || []).forEach(item => { map[item.id] = item.snippet.title; });
+  return map;
+}
 
 // 全タグ収集
 const allTags = [...new Set(VIDEOS.flatMap(v => v.tags))].sort();
@@ -384,6 +403,7 @@ const allTags = [...new Set(VIDEOS.flatMap(v => v.tags))].sort();
 let activeBelt = "all";
 let activeTags = new Set();
 let keyword = "";
+let videoTitles = {}; // { videoId: "タイトル" }
 
 // タグフィルター描画
 function renderTagFilter() {
@@ -409,7 +429,9 @@ function renderGrid() {
     if (activeBelt !== "all" && v.belt !== activeBelt) return false;
     if (activeTags.size > 0 && ![...activeTags].every(t => v.tags.includes(t))) return false;
     if (kw) {
-      if (!v.title.toLowerCase().includes(kw)) return false;
+      const vid = extractVideoId(v.youtube);
+      const title = (vid && videoTitles[vid]) || "";
+      if (!title.toLowerCase().includes(kw)) return false;
     }
     return true;
   });
@@ -426,6 +448,8 @@ function renderGrid() {
   }
 
   filtered.forEach(v => {
+    const vid = extractVideoId(v.youtube);
+    const title = (vid && videoTitles[vid]) || "読み込み中...";
     const a = document.createElement("a");
     a.className = "card";
     a.href = v.youtube;
@@ -433,7 +457,7 @@ function renderGrid() {
     a.rel = "noopener noreferrer";
     a.innerHTML = `
       <div class="thumb-wrap">
-        <img src="${v.thumbnail}" alt="${v.title}" loading="lazy">
+        <img src="${v.thumbnail}" alt="${title}" loading="lazy">
         <div class="play-icon">
           <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="30" cy="30" r="30" fill="rgba(0,0,0,0.6)"/>
@@ -443,7 +467,7 @@ function renderGrid() {
         <span class="belt-badge ${v.belt}">${BELT_LABEL[v.belt]}</span>
       </div>
       <div class="card-body">
-        <div class="card-title">${v.title}</div>
+        <div class="card-title">${title}</div>
         <div class="card-desc">${v.description}</div>
         <div class="card-tags">${v.tags.slice(0, 3).map(t => `<span class="tag">#${t}</span>`).join("")}</div>
       </div>
@@ -468,9 +492,13 @@ document.getElementById("searchInput").addEventListener("input", e => {
   renderGrid();
 });
 
-// 初期描画
+// 初期描画（タイトルをAPIから取得してから描画）
 renderTagFilter();
-renderGrid();
+renderGrid(); // まず「読み込み中...」で表示
+fetchYouTubeTitles().then(titles => {
+  videoTitles = titles;
+  renderGrid(); // タイトル取得後に再描画
+});
 </script>
 </body>
 </html>
