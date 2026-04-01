@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>柔術アーカイブ</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --surface: #161920;
+      --surface2: #1e2230;
+      --border: #2a2f42;
+      --accent: #4f8ef7;
+      --accent2: #7c5cbf;
+      --text: #e8eaf0;
+      --text-muted: #7a80a0;
+      --belt-white: #f0f0f0;
+      --belt-blue: #2563eb;
+      --belt-purple: #7c3aed;
+      --belt-brown: #92400e;
+      --belt-black: #1a1a1a;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, #0d0f14 0%, #1a1030 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 16px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .header-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      background: linear-gradient(90deg, #4f8ef7, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+
+    .header-title span {
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      display: block;
+      -webkit-text-fill-color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Search */
+    .search-bar {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .search-bar input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 16px 10px 40px;
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-bar input::placeholder { color: var(--text-muted); }
+    .search-bar input:focus { border-color: var(--accent); }
+
+    .search-bar .icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    /* Belt filter */
+    .belt-filter {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+      margin-bottom: 10px;
+    }
+
+    .belt-filter::-webkit-scrollbar { display: none; }
+
+    .belt-btn {
+      flex-shrink: 0;
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .belt-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .belt-btn[data-belt="all"]    .belt-dot { background: linear-gradient(135deg, #4f8ef7, #a78bfa); }
+    .belt-btn[data-belt="white"]  .belt-dot { background: #e8eaf0; border: 1px solid #555; }
+    .belt-btn[data-belt="blue"]   .belt-dot { background: var(--belt-blue); }
+    .belt-btn[data-belt="purple"] .belt-dot { background: var(--belt-purple); }
+    .belt-btn[data-belt="brown"]  .belt-dot { background: var(--belt-brown); }
+    .belt-btn[data-belt="black"]  .belt-dot { background: #555; border: 1px solid #888; }
+
+    .belt-btn.active {
+      color: var(--text);
+      border-color: transparent;
+    }
+
+    .belt-btn[data-belt="all"].active    { background: linear-gradient(135deg, #1e3a6e, #2d1b5e); border-color: var(--accent); }
+    .belt-btn[data-belt="white"].active  { background: #2a2f42; border-color: #c0c4d0; }
+    .belt-btn[data-belt="blue"].active   { background: #1a2d5e; border-color: var(--belt-blue); }
+    .belt-btn[data-belt="purple"].active { background: #2d1b5e; border-color: var(--belt-purple); }
+    .belt-btn[data-belt="brown"].active  { background: #3b1e08; border-color: #b45309; }
+    .belt-btn[data-belt="black"].active  { background: #1e2230; border-color: #666; }
+
+    /* Tag filter */
+    .tag-filter {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag-btn {
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .tag-btn.active {
+      background: #1e2a4a;
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Main */
+    main {
+      padding: 16px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .result-info {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .result-info strong { color: var(--text); }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    @media (min-width: 600px) {
+      .grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    }
+
+    @media (min-width: 900px) {
+      .grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    /* Card */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+      text-decoration: none;
+      display: block;
+      color: inherit;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+      box-shadow: 0 8px 24px rgba(79, 142, 247, 0.15);
+    }
+
+    .card:active { transform: translateY(0); }
+
+    .thumb-wrap {
+      position: relative;
+      aspect-ratio: 16/9;
+      background: var(--surface2);
+      overflow: hidden;
+    }
+
+    .thumb-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .thumb-wrap .play-icon {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.3);
+      opacity: 0;
+      transition: opacity 0.18s;
+    }
+
+    .card:hover .play-icon { opacity: 1; }
+
+    .play-icon svg {
+      width: 40px;
+      height: 40px;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+    }
+
+    .belt-badge {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .belt-badge.white  { background: #e8eaf0; color: #1a1a2e; }
+    .belt-badge.blue   { background: var(--belt-blue); color: #fff; }
+    .belt-badge.purple { background: var(--belt-purple); color: #fff; }
+    .belt-badge.brown  { background: var(--belt-brown); color: #fff; }
+    .belt-badge.black  { background: #333; color: #fff; border: 1px solid #555; }
+
+    .card-body {
+      padding: 10px;
+    }
+
+    .card-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 4px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-desc {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .tag {
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    /* Empty */
+    .empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      grid-column: 1 / -1;
+    }
+
+    .empty .emoji { font-size: 2.5rem; margin-bottom: 10px; }
+    .empty p { font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-title">
+    柔術アーカイブ
+    <span>JUJITSU MATCH ARCHIVE</span>
+  </div>
+
+  <div class="search-bar">
+    <span class="icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="タイトル・説明・タグで検索…">
+  </div>
+
+  <div class="belt-filter" id="beltFilter">
+    <button class="belt-btn active" data-belt="all"><span class="belt-dot"></span>すべて</button>
+    <button class="belt-btn" data-belt="white"><span class="belt-dot"></span>白帯</button>
+    <button class="belt-btn" data-belt="blue"><span class="belt-dot"></span>青帯</button>
+    <button class="belt-btn" data-belt="purple"><span class="belt-dot"></span>紫帯</button>
+    <button class="belt-btn" data-belt="brown"><span class="belt-dot"></span>茶帯</button>
+    <button class="belt-btn" data-belt="black"><span class="belt-dot"></span>黒帯</button>
+  </div>
+
+  <div class="tag-filter" id="tagFilter"></div>
+</header>
+
+<main>
+  <div class="result-info" id="resultInfo"></div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<script>
+// ============================================================
+// データ管理：ここのVIDEOS配列を編集してください
+// ============================================================
+const VIDEOS = [
+  {
+    id: 1,
+    title: "大会名不明_青帯_白道着 vs 黒道着",
+    description: "白道着の選手が序盤に引き込んでガードを作り、下から相手をコントロールする展開で始まります。中盤で白道着の選手がスイープを成功させてトップポジションを奪取し、強いプレッシャーをかけました。最後はトップから絞め技を極め、黒道着の選手からタップアウトを奪って白道着の選手が勝利しました。",
+    belt: "blue",
+    tags: ["青帯", "オープンガード", "スイープ", "トップポジション", "絞め技", "タップアウト"],
+    youtube: "https://youtu.be/7Tn7zpRBuMk",
+    thumbnail: "https://img.youtube.com/vi/7Tn7zpRBuMk/mqdefault.jpg",
+    date: "2026/03/25"
+  }
+];
+// ============================================================
+
+const BELT_LABEL = {
+  white: "白帯", blue: "青帯", purple: "紫帯", brown: "茶帯", black: "黒帯"
+};
+
+// 全タグ収集
+const allTags = [...new Set(VIDEOS.flatMap(v => v.tags))].sort();
+
+let activeBelt = "all";
+let activeTags = new Set();
+let keyword = "";
+
+// タグフィルター描画
+function renderTagFilter() {
+  const wrap = document.getElementById("tagFilter");
+  wrap.innerHTML = "";
+  allTags.forEach(tag => {
+    const btn = document.createElement("button");
+    btn.className = "tag-btn" + (activeTags.has(tag) ? " active" : "");
+    btn.textContent = "#" + tag;
+    btn.addEventListener("click", () => {
+      activeTags.has(tag) ? activeTags.delete(tag) : activeTags.add(tag);
+      renderTagFilter();
+      renderGrid();
+    });
+    wrap.appendChild(btn);
+  });
+}
+
+// カード描画
+function renderGrid() {
+  const kw = keyword.trim().toLowerCase();
+  const filtered = VIDEOS.filter(v => {
+    if (activeBelt !== "all" && v.belt !== activeBelt) return false;
+    if (activeTags.size > 0 && ![...activeTags].every(t => v.tags.includes(t))) return false;
+    if (kw) {
+      const haystack = (v.title + v.description + v.tags.join(" ")).toLowerCase();
+      if (!haystack.includes(kw)) return false;
+    }
+    return true;
+  });
+
+  const info = document.getElementById("resultInfo");
+  info.innerHTML = `<strong>${filtered.length}</strong> 件`;
+
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty"><div class="emoji">🥋</div><p>該当する動画が見つかりません</p></div>`;
+    return;
+  }
+
+  filtered.forEach(v => {
+    const a = document.createElement("a");
+    a.className = "card";
+    a.href = v.youtube;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.innerHTML = `
+      <div class="thumb-wrap">
+        <img src="${v.thumbnail}" alt="${v.title}" loading="lazy">
+        <div class="play-icon">
+          <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="30" cy="30" r="30" fill="rgba(0,0,0,0.6)"/>
+            <polygon points="24,18 46,30 24,42" fill="white"/>
+          </svg>
+        </div>
+        <span class="belt-badge ${v.belt}">${BELT_LABEL[v.belt]}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${v.title}</div>
+        <div class="card-desc">${v.description}</div>
+        <div class="card-tags">${v.tags.map(t => `<span class="tag">#${t}</span>`).join("")}</div>
+      </div>
+    `;
+    grid.appendChild(a);
+  });
+}
+
+// 帯フィルター
+document.getElementById("beltFilter").addEventListener("click", e => {
+  const btn = e.target.closest(".belt-btn");
+  if (!btn) return;
+  document.querySelectorAll(".belt-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  activeBelt = btn.dataset.belt;
+  renderGrid();
+});
+
+// キーワード検索
+document.getElementById("searchInput").addEventListener("input", e => {
+  keyword = e.target.value;
+  renderGrid();
+});
+
+// 初期描画
+renderTagFilter();
+renderGrid();
+</script>
+</body>
+</html>
