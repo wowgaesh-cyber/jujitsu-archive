@@ -24,8 +24,15 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Inject API key
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: |
-          sed -i "s|__YOUTUBE_API_KEY__|${{ secrets.YOUTUBE_API_KEY }}|g" jujitsu_archive.html
+          if [ -z "$YOUTUBE_API_KEY" ]; then
+            echo "ERROR: YOUTUBE_API_KEY secret is not set" >&2
+            exit 1
+          fi
+          sed -i "s|__YOUTUBE_API_KEY__|${YOUTUBE_API_KEY}|g" jujitsu_archive.html
+          grep -q "AIza" jujitsu_archive.html && echo "Injection OK" || { echo "ERROR: Injection failed" >&2; exit 1; }
 
       - uses: actions/configure-pages@v5
 
