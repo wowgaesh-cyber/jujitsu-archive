@@ -406,24 +406,6 @@ const VIDEOS = [
   },
   {
     id: 5,
-    description: "序盤は両選手が積極的にテイクダウンや引き込みを試み、グラウンドでの主導権争いが繰り広げられた。中盤に入ると一方がガードパスに成功し、サイドコントロールからマウントポジションへと移行。終盤には、マウントからのアームロックを仕掛けるも、相手は粘り強いディフェンスで凌ぎきり、最終的には時間切れでポイントによる勝利となった。",
-    belt: "white",
-    tags: ["アームロック", "ガードパス", "マウントポジション"],
-    youtube: "https://youtu.be/-HG-pY-K5Xw",
-    thumbnail: "https://img.youtube.com/vi/-HG-pY-K5Xw/mqdefault.jpg",
-    date: "2026/04/03"
-  },
-  {
-    id: 6,
-    description: "試合は序盤、互いにスタンドからの引き込みとパスガードの探り合いで始まりました。中盤に入ると、一方がスイープに成功して有利なポジションを奪い、激しい攻防が繰り広げられます。終盤、疲れが見え始めた相手に対してマウントポジションから得意の腕十字を極め、見事な一本勝ちを収めました。",
-    belt: "white",
-    tags: ["スイープ", "腕十字", "パスガード"],
-    youtube: "https://youtu.be/9DYS93yT2lI",
-    thumbnail: "https://img.youtube.com/vi/9DYS93yT2lI/mqdefault.jpg",
-    date: "2026/04/03"
-  },
-  {
-    id: 7,
     description: "序盤は両者慎重な立ち上がりで、互いにグリップと体勢を伺う展開が続いた。中盤に入ると一方が積極的に仕掛け、パスガードやスイープを狙い激しい攻防が繰り広げられた。終盤、隙を突いた見事なサブミッションで勝負が決した。",
     belt: "blue",
     tags: ["スイープ", "チョーク", "パスガード"],
@@ -432,7 +414,7 @@ const VIDEOS = [
     date: "2026/04/03"
   },
   {
-    id: 8,
+    id: 6,
     description: "提供されたメタデータがないため、具体的な試合展開を説明することは困難です。しかし、一般的な柔術の試合として、序盤は立ち技からの攻防やガードへの引き込み、中盤はポジションの奪い合いやスイープの試み、終盤はフィニッシュを狙う展開が繰り広げられたと推測されます。勝敗は不明です。",
     belt: "blue",
     tags: ["スイープ", "パスガード", "サブミッション"],
@@ -441,7 +423,7 @@ const VIDEOS = [
     date: "2026/04/03"
   },
   {
-    id: 9,
+    id: 7,
     description: "試合はスタンドから始まり、序盤は両者拮抗した状態が続いた。中盤に入ると片方の選手が引き込み、クローズドガードからのスイープを狙う展開に。終盤、トップの選手がパスガードに成功し、サイドコントロールからマウント、そしてバックへと移行し、最後はリアネイキッドチョークで一本勝ちを収めた。",
     belt: "blue",
     tags: ["リアネイキッドチョーク", "パスガード", "バックテイク"],
@@ -450,7 +432,7 @@ const VIDEOS = [
     date: "2026/04/03"
   },
   {
-    id: 10,
+    id: 8,
     description: "試合は序盤から激しい攻防が繰り広げられ、両者ともにテイクダウンや引き込みを試みる展開となった。中盤にかけては、パスガードやスイープを狙いながら、細かなポジションの奪い合いが続いた。終盤には一方がチャンスを掴み、サブミッションで一本勝ちを収め、試合に決着がついた。",
     belt: "white",
     tags: ["スイープ", "チョーク", "パスガード"],
@@ -459,7 +441,7 @@ const VIDEOS = [
     date: "2026/04/03"
   },
   {
-    id: 11,
+    id: 9,
     description: "試合は両者引き込みから始まり、序盤はガードの攻防が続いた。中盤、一方がハーフガードからスイープに成功しトップポジションを奪取、粘り強くパスガードを仕掛けてサイドコントロールへ移行した。終盤にはマウントポジションからバックテイクへとつなぎ、最後はチョークで一本勝ちを収めた。",
     belt: "blue",
     tags: ["チョーク", "スイープ", "パスガード"],
@@ -468,7 +450,7 @@ const VIDEOS = [
     date: "2026/04/03"
   },
   {
-    id: 12,
+    id: 10,
     description: "試合は両者慎重な組み手争いから始まり、序盤は主にガードの攻防が続いた。中盤に差しかかり、一方が巧妙なスイープでマウントポジションを奪取。終盤、マウントからのアームバーを極め、見事一本勝ちを収めた。",
     belt: "white",
     tags: ["スイープ", "マウント", "アームバー"],
@@ -507,7 +489,7 @@ async function fetchYouTubeTitles() {
 const allTags = [...new Set(VIDEOS.flatMap(v => v.tags))].sort();
 
 let activeBelt = "all";
-let activeTags = new Set();
+let activeTag = null;
 let keyword = "";
 let videoTitles = {}; // { videoId: "タイトル" }
 
@@ -517,10 +499,10 @@ function renderTagFilter() {
   wrap.innerHTML = "";
   allTags.forEach(tag => {
     const btn = document.createElement("button");
-    btn.className = "tag-btn" + (activeTags.has(tag) ? " active" : "");
+    btn.className = "tag-btn" + (activeTag === tag ? " active" : "");
     btn.textContent = "#" + tag;
     btn.addEventListener("click", () => {
-      activeTags.has(tag) ? activeTags.delete(tag) : activeTags.add(tag);
+      activeTag = activeTag === tag ? null : tag;
       renderTagFilter();
       renderGrid();
     });
@@ -533,7 +515,7 @@ function renderGrid() {
   const kw = keyword.trim().toLowerCase();
   const filtered = VIDEOS.filter(v => {
     if (activeBelt !== "all" && v.belt !== activeBelt) return false;
-    if (activeTags.size > 0 && ![...activeTags].every(t => v.tags.includes(t))) return false;
+    if (activeTag !== null && !v.tags.includes(activeTag)) return false;
     if (kw) {
       const vid = extractVideoId(v.youtube);
       const title = (vid && videoTitles[vid]) || "";
