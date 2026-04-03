@@ -2,7 +2,7 @@
 """
 柔術アーカイブ 動画追加スクリプト
 使い方:
-  python add_video.py <YouTube URL> --belt 青帯
+  python add_video.py "https://youtu.be/AAA:青帯" "https://youtu.be/BBB:白帯"
 
 必要な環境変数:
   GEMINI_API_KEY  ... Google Gemini APIキー
@@ -191,37 +191,46 @@ def git_commit_and_push() -> None:
 # メイン
 # ----------------------------------------------------------------
 def main() -> None:
-    parser = argparse.ArgumentParser(description="柔術アーカイブに動画を追加します")
-    parser.add_argument("url", help="YouTube の URL")
+    parser = argparse.ArgumentParser(
+        description='柔術アーカイブに動画を追加します。"URL:帯色" の形式で複数指定可。'
+    )
     parser.add_argument(
-        "--belt",
-        required=True,
-        choices=list(BELT_MAP.keys()),
-        help="帯色（白帯/青帯/紫帯/茶帯/黒帯）",
+        "entries",
+        nargs="+",
+        metavar="URL:帯色",
+        help='例: "https://youtu.be/AAA:青帯"',
     )
     args = parser.parse_args()
 
-    if not extract_video_id(args.url):
-        sys.exit("エラー: 有効な YouTube URL を指定してください。")
+    pairs = []
+    for entry in args.entries:
+        if ":" not in entry:
+            sys.exit(f"エラー: 「URL:帯色」の形式で指定してください → {entry}")
+        url, belt = entry.rsplit(":", 1)
+        if not extract_video_id(url):
+            sys.exit(f"エラー: 有効な YouTube URL を指定してください → {url}")
+        if belt not in BELT_MAP:
+            sys.exit(f"エラー: 帯色が不正です（{'/'.join(BELT_MAP.keys())}）→ {belt}")
+        pairs.append((url, belt))
 
-    print(f"🎬 動画を解析中: {args.url}")
-    gemini_result = analyze_with_gemini(args.url)
-    print(f"✓ Gemini 解析完了")
-    print(f"  description: {gemini_result['description'][:60]}...")
-    print(f"  tags: {gemini_result['tags']}")
+    today = date.today().strftime("%Y/%m/%d")
+    for url, belt in pairs:
+        print(f"動画を解析中: {url}")
+        gemini_result = analyze_with_gemini(url)
+        print(f"  description: {gemini_result['description'][:60]}...")
+        print(f"  tags: {gemini_result['tags']}")
 
-    video_entry = {
-        "youtube": args.url,
-        "belt": BELT_MAP[args.belt],
-        "date": date.today().strftime("%Y/%m/%d"),
-        "description": gemini_result["description"],
-        "tags": gemini_result["tags"],
-    }
+        video_entry = {
+            "youtube": url,
+            "belt": BELT_MAP[belt],
+            "date": today,
+            "description": gemini_result["description"],
+            "tags": gemini_result["tags"],
+        }
+        add_to_html(video_entry)
 
-    add_to_html(video_entry)
     git_commit_and_push()
-
-    print("\n✅ 完了！")
+    print("\n完了！")
 
 
 if __name__ == "__main__":
