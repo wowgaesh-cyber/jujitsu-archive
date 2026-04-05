@@ -13,7 +13,10 @@
       "Bash(GEMINI_API_KEY=\"AIzaSyDJYDOxPPKTBNVIt2NNILmQ4D3E4qiH4P0\" python3 add_video.py https://youtu.be/7Tn7zpRBuMk --belt 青帯)",
       "Bash(GEMINI_API_KEY=\"AIzaSyCpbDpqLpm0Cn9NEUk14J3G2muAZFx0CiM\" python3 add_video.py https://youtu.be/7Tn7zpRBuMk --belt 青帯)",
       "Bash(GEMINI_API_KEY=\"AIzaSyCO3NwYCk3HCpsgTc1piEDdAN3AmHQX8UY\" python3 add_video.py https://youtu.be/7Tn7zpRBuMk --belt 青帯)",
-      "Bash(GEMINI_API_KEY=\"AIzaSyCO3NwYCk3HCpsgTc1piEDdAN3AmHQX8UY\" python3 -c \"\nfrom google import genai\nclient = genai.Client\\(api_key='AIzaSyCO3NwYCk3HCpsgTc1piEDdAN3AmHQX8UY'\\)\nresponse = client.models.generate_content\\(\n    model='gemini-2.5-flash',\n    contents='「テスト」とだけ答えてください'\n\\)\nprint\\(response.text\\)\n\")"
+      "Bash(GEMINI_API_KEY=\"AIzaSyCO3NwYCk3HCpsgTc1piEDdAN3AmHQX8UY\" python3 -c \"\nfrom google import genai\nclient = genai.Client\\(api_key='AIzaSyCO3NwYCk3HCpsgTc1piEDdAN3AmHQX8UY'\\)\nresponse = client.models.generate_content\\(\n    model='gemini-2.5-flash',\n    contents='「テスト」とだけ答えてください'\n\\)\nprint\\(response.text\\)\n\")",
+      "WebFetch(domain:website-ibjjf-production.s3.amazonaws.com)",
+      "Bash(pdftotext \"/Users/uogaeshishinya/.claude/projects/-Users-uogaeshishinya-jujitsu-archive/7b780705-c94f-43c1-92f0-7125453a0127/tool-results/webfetch-1775379411982-ekuatq.pdf\" -)",
+      "Bash(python3 -c \":*)"
     ]
   }
 }
