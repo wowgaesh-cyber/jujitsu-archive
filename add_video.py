@@ -31,74 +31,9 @@ BELT_MAP = {
     "黒帯": "black",
 }
 
+VALID_RULESETS = {"JBJJF", "ASJJF"}
 
-# ----------------------------------------------------------------
-# ユーティリティ
-# ----------------------------------------------------------------
-def extract_video_id(url: str) -> str | None:
-    m = re.search(
-        r"(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|shorts/))([A-Za-z0-9_-]{11})",
-        url,
-    )
-    return m.group(1) if m else None
-
-
-def get_next_id(html: str) -> int:
-    ids = re.findall(r"\bid:\s*(\d+)", html)
-    return max((int(i) for i in ids), default=0) + 1
-
-
-# ----------------------------------------------------------------
-# yt-dlp でYouTubeメタデータ取得
-# ----------------------------------------------------------------
-def get_youtube_metadata(youtube_url: str) -> dict:
-    result = subprocess.run(
-        ["yt-dlp", "--dump-json", "--no-download", youtube_url],
-        capture_output=True, text=True,
-    )
-    if result.returncode != 0:
-        return {}
-    import json
-    data = json.loads(result.stdout)
-    return {
-        "title": data.get("title", ""),
-        "description": data.get("description", ""),
-        "uploader": data.get("uploader", ""),
-        "tags": data.get("tags", []),
-    }
-
-
-# ----------------------------------------------------------------
-# Gemini で解析
-# ----------------------------------------------------------------
-def analyze_with_gemini(youtube_url: str) -> dict:
-    import json
-
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        sys.exit("エラー: 環境変数 GEMINI_API_KEY が設定されていません。")
-
-    print("  YouTube メタデータを取得中...")
-    meta = get_youtube_metadata(youtube_url)
-    context_parts = []
-    if meta.get("title"):
-        context_parts.append(f"タイトル: {meta['title']}")
-    if meta.get("uploader"):
-        context_parts.append(f"投稿者: {meta['uploader']}")
-    if meta.get("description"):
-        context_parts.append(f"概要欄:\n{meta['description'][:800]}")
-    if meta.get("tags"):
-        context_parts.append(f"タグ: {', '.join(meta['tags'][:10])}")
-    context = "\n".join(context_parts) if context_parts else "（メタデータなし）"
-
-    client = genai.Client(api_key=api_key)
-
-    prompt = f"""以下は柔術の試合動画のYouTubeメタデータです。
-
-{context}
-
----
-【IBJJFルール参考情報】
+IBJJF_RULES = """【IBJJFルール参考情報】
 
 ■ ポイントが入る技と点数
 - テイクダウン（Takedown）: 2点
@@ -145,9 +80,9 @@ def analyze_with_gemini(youtube_url: str) -> dict:
 3. ポイント差（多い方が勝ち）
 4. アドバンテージ差（多い方が勝ち）
 5. ペナルティ差（少ない方が勝ち）
-6. 審判の判定（referee decision）
+6. 審判の判定（referee decision）"""
 
----
+ASJJF_DIFF = """
 【ASJJFルール（IBJJFとの主な差分）】
 ※ASJJF（Sport Jiu-Jitsu International Federation / SJJIF）のルールはIBJJFと多くが共通するが、以下の点が異なる。
 
@@ -174,7 +109,80 @@ def analyze_with_gemini(youtube_url: str) -> dict:
 - 3位は敗者復活決勝の勝者（bronze matchあり）。
 
 ■ 試合時間（主な差分）
-- マスター36歳以上は全帯一律5分（IBJJFは帯ごとに時間が異なる）。
+- マスター36歳以上は全帯一律5分（IBJJFは帯ごとに時間が異なる）。"""
+
+
+# ----------------------------------------------------------------
+# ユーティリティ
+# ----------------------------------------------------------------
+def extract_video_id(url: str) -> str | None:
+    m = re.search(
+        r"(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|shorts/))([A-Za-z0-9_-]{11})",
+        url,
+    )
+    return m.group(1) if m else None
+
+
+def get_next_id(html: str) -> int:
+    ids = re.findall(r"\bid:\s*(\d+)", html)
+    return max((int(i) for i in ids), default=0) + 1
+
+
+# ----------------------------------------------------------------
+# yt-dlp でYouTubeメタデータ取得
+# ----------------------------------------------------------------
+def get_youtube_metadata(youtube_url: str) -> dict:
+    result = subprocess.run(
+        ["yt-dlp", "--dump-json", "--no-download", youtube_url],
+        capture_output=True, text=True,
+    )
+    if result.returncode != 0:
+        return {}
+    import json
+    data = json.loads(result.stdout)
+    return {
+        "title": data.get("title", ""),
+        "description": data.get("description", ""),
+        "uploader": data.get("uploader", ""),
+        "tags": data.get("tags", []),
+    }
+
+
+# ----------------------------------------------------------------
+# Gemini で解析
+# ----------------------------------------------------------------
+def analyze_with_gemini(youtube_url: str, ruleset: str = "JBJJF") -> dict:
+    import json
+
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        sys.exit("エラー: 環境変数 GEMINI_API_KEY が設定されていません。")
+
+    print("  YouTube メタデータを取得中...")
+    meta = get_youtube_metadata(youtube_url)
+    context_parts = []
+    if meta.get("title"):
+        context_parts.append(f"タイトル: {meta['title']}")
+    if meta.get("uploader"):
+        context_parts.append(f"投稿者: {meta['uploader']}")
+    if meta.get("description"):
+        context_parts.append(f"概要欄:\n{meta['description'][:800]}")
+    if meta.get("tags"):
+        context_parts.append(f"タグ: {', '.join(meta['tags'][:10])}")
+    context = "\n".join(context_parts) if context_parts else "（メタデータなし）"
+
+    client = genai.Client(api_key=api_key)
+
+    rules = IBJJF_RULES
+    if ruleset == "ASJJF":
+        rules += "\n" + ASJJF_DIFF
+
+    prompt = f"""以下は柔術の試合動画のYouTubeメタデータです。
+
+{context}
+
+---
+{rules}
 
 ---
 
@@ -273,31 +281,42 @@ def git_commit_and_push() -> None:
 # ----------------------------------------------------------------
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description='柔術アーカイブに動画を追加します。"URL:帯色" の形式で複数指定可。'
+        description='柔術アーカイブに動画を追加します。"URL:帯色[:ルールセット]" の形式で複数指定可。'
     )
     parser.add_argument(
         "entries",
         nargs="+",
-        metavar="URL:帯色",
-        help='例: "https://youtu.be/AAA:青帯"',
+        metavar="URL:帯色[:ルールセット]",
+        help='例: "https://youtu.be/AAA:青帯" または "https://youtu.be/AAA:青帯:ASJJF"',
+    )
+    parser.add_argument(
+        "--ruleset",
+        choices=list(VALID_RULESETS),
+        default="JBJJF",
+        help="使用するルールセット（デフォルト: JBJJF）。URL内に指定がある場合はそちらが優先される。",
     )
     args = parser.parse_args()
 
-    pairs = []
+    triples = []
     for entry in args.entries:
-        if ":" not in entry:
-            sys.exit(f"エラー: 「URL:帯色」の形式で指定してください → {entry}")
-        url, belt = entry.rsplit(":", 1)
+        parts = entry.rsplit(":", 2)
+        if len(parts) == 3 and parts[2] in VALID_RULESETS:
+            url, belt, entry_ruleset = parts
+        else:
+            url, _, belt = entry.rpartition(":")
+            if not url:
+                sys.exit(f"エラー: 「URL:帯色」の形式で指定してください → {entry}")
+            entry_ruleset = args.ruleset
         if not extract_video_id(url):
             sys.exit(f"エラー: 有効な YouTube URL を指定してください → {url}")
         if belt not in BELT_MAP:
             sys.exit(f"エラー: 帯色が不正です（{'/'.join(BELT_MAP.keys())}）→ {belt}")
-        pairs.append((url, belt))
+        triples.append((url, belt, entry_ruleset))
 
     today = date.today().strftime("%Y/%m/%d")
-    for url, belt in pairs:
-        print(f"動画を解析中: {url}")
-        gemini_result = analyze_with_gemini(url)
+    for url, belt, ruleset in triples:
+        print(f"動画を解析中: {url} [{ruleset}]")
+        gemini_result = analyze_with_gemini(url, ruleset)
         print(f"  description: {gemini_result['description'][:60]}...")
         print(f"  tags: {gemini_result['tags']}")
 
