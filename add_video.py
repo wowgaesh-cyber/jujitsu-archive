@@ -13,6 +13,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 from datetime import date
 
 from google import genai
@@ -314,7 +315,10 @@ def main() -> None:
         triples.append((url, belt, entry_ruleset))
 
     today = date.today().strftime("%Y/%m/%d")
-    for url, belt, ruleset in triples:
+    for i, (url, belt, ruleset) in enumerate(triples):
+        if i > 0:
+            print("  5秒待機中...")
+            time.sleep(5)
         print(f"動画を解析中: {url} [{ruleset}]")
         gemini_result = analyze_with_gemini(url, ruleset)
         print(f"  description: {gemini_result['description'][:60]}...")
