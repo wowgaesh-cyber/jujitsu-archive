@@ -314,11 +314,13 @@ def main() -> None:
             sys.exit(f"エラー: 帯色が不正です（{'/'.join(BELT_MAP.keys())}）→ {belt}")
         triples.append((url, belt, entry_ruleset))
 
+    total = len(triples)
     today = date.today().strftime("%Y/%m/%d")
     for i, (url, belt, ruleset) in enumerate(triples):
         if i > 0:
-            print("  5秒待機中...")
-            time.sleep(5)
+            print("30秒待機中...")
+            time.sleep(30)
+        print(f"[{i + 1}/{total}] 処理中: {url}")
         print(f"動画を解析中: {url} [{ruleset}]")
         gemini_result = analyze_with_gemini(url, ruleset)
         print(f"  description: {gemini_result['description'][:60]}...")
