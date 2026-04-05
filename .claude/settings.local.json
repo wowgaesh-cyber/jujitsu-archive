@@ -16,7 +16,9 @@
       "Bash(GEMINI_API_KEY=\"AIzaSyCO3NwYCk3HCpsgTc1piEDdAN3AmHQX8UY\" python3 -c \"\nfrom google import genai\nclient = genai.Client\\(api_key='AIzaSyCO3NwYCk3HCpsgTc1piEDdAN3AmHQX8UY'\\)\nresponse = client.models.generate_content\\(\n    model='gemini-2.5-flash',\n    contents='「テスト」とだけ答えてください'\n\\)\nprint\\(response.text\\)\n\")",
       "WebFetch(domain:website-ibjjf-production.s3.amazonaws.com)",
       "Bash(pdftotext \"/Users/uogaeshishinya/.claude/projects/-Users-uogaeshishinya-jujitsu-archive/7b780705-c94f-43c1-92f0-7125453a0127/tool-results/webfetch-1775379411982-ekuatq.pdf\" -)",
-      "Bash(python3 -c \":*)"
+      "Bash(python3 -c \":*)",
+      "Bash(curl -L -o /tmp/SJJIF_Rulebook_jp.pdf \"https://sjjjf.org/wp-content/uploads/2019/01/SJJIF_Rulebook_jp.pdf\")",
+      "Read(//tmp/**)"
     ]
   }
 }
