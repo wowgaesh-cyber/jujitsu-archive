@@ -377,6 +377,123 @@
 // データ管理：ここのVIDEOS配列を編集してください
 // ============================================================
 const VIDEOS = [
+  {
+    id: 1,
+    description: "提供されたメタデータには試合内容に関する情報が含まれていないため、具体的な試合の流れ、序盤・中盤・終盤の展開、および勝敗を記述することはできません。一般的な柔術の試合では、テイクダウンやガードからの攻防、パスガードやスイープでのポイント獲得、そして最終的にはサブミッションによる決着が主な展開となります。",
+    belt: "white",
+    tags: ["サブミッション", "パスガード", "スイープ"],
+    youtube: "https://youtu.be/-HG-pY-K5Xw",
+    thumbnail: "https://img.youtube.com/vi/-HG-pY-K5Xw/mqdefault.jpg",
+    date: "2026/04/05"
+  },
+  {
+    id: 2,
+    description: "試合の具体的なメタデータが提供されていないため、詳細な展開は不明です。一般的な柔術の試合では、序盤は立ち技または引き込みからのグラウンド展開となり、中盤はガードパスやスイープ、ポジションキープを巡る激しい攻防が繰り広げられます。終盤に向けてサブミッションのチャンスが探られ、最終的にはポイント差、アドバンテージ差、あるいはサブミッションによる一本勝ちで勝敗が決します。",
+    belt: "white",
+    tags: ["ガードパス", "スイープ", "チョーク"],
+    youtube: "https://youtu.be/9DYS93yT2lI",
+    thumbnail: "https://img.youtube.com/vi/9DYS93yT2lI/mqdefault.jpg",
+    date: "2026/04/05"
+  },
+  {
+    id: 3,
+    description: "試合開始直後、スタンドでのテイクダウン攻防から一方がガードポジションに引き込み試合が展開。中盤では、トップの選手が巧みなハーフガードパスで3点を先取し優位に立つ。しかし、劣勢だった選手が諦めずに反撃を開始。終盤に隙を突き、得意のクロックチョークを極め見事タップアウトを奪い逆転勝利を飾った。",
+    belt: "blue",
+    tags: ["パスガード", "クロックチョーク", "ガードポジション"],
+    youtube: "https://youtu.be/8Y-10wc-jVo",
+    thumbnail: "https://img.youtube.com/vi/8Y-10wc-jVo/mqdefault.jpg",
+    date: "2026/04/05"
+  },
+  {
+    id: 4,
+    description: "序盤は両選手が立ち技で拮抗し、テイクダウンや引き込みを巡る攻防が見られました。中盤に入るとグラウンドに移行し、パスガードやスイープを巡る激しいポジション争いが繰り広げられました。終盤にかけてどちらかの選手が優位なポジションを確保し、ポイント差またはサブミッションにより決着がつきました。",
+    belt: "blue",
+    tags: ["パスガード", "スイープ", "サブミッション"],
+    youtube: "https://youtu.be/KU--CY3ToLA",
+    thumbnail: "https://img.youtube.com/vi/KU--CY3ToLA/mqdefault.jpg",
+    date: "2026/04/05"
+  },
+  {
+    id: 5,
+    description: "序盤、両者共に引き込みからクローズドガードとパスガードの攻防を繰り広げる展開。中盤、上になった選手がハーフガードを突破しパスガードを成功させ、続けてニーオンベリーからマウントポジションを奪取。終盤、下になった選手がマウントエスケープからスイープで体勢を逆転し、そのままバックポジションからのチョークを極め一本勝ちを収めた。",
+    belt: "blue",
+    tags: ["パスガード", "マウント", "チョーク"],
+    youtube: "https://youtu.be/xrY9xevKqUA",
+    thumbnail: "https://img.youtube.com/vi/xrY9xevKqUA/mqdefault.jpg",
+    date: "2026/04/05"
+  },
+  {
+    id: 6,
+    description: "試合動画のメタデータが提供されていないため、特定の試合の流れや勝敗を説明することはできません。序盤、中盤、終盤における両選手の具体的な攻防や戦略は不明です。情報がないため、詳細な展開を推測することも困難です。",
+    belt: "white",
+    tags: ["パスガード", "マウント", "チョーク"],
+    youtube: "https://youtu.be/RiLd_xe198w",
+    thumbnail: "https://img.youtube.com/vi/RiLd_xe198w/mqdefault.jpg",
+    date: "2026/04/05"
+  },
+  {
+    id: 7,
+    description: "序盤は両選手が立ち技での探り合いを見せるも、一方がガードに引き込みグラウンドでの攻防が始まった。中盤には積極的なスイープやパスガードの試みが繰り広げられたが、相手は安定したディフェンスでこれを防ぎ続ける。終盤、わずかなポイント差でリードを奪った選手が優位を保ち、そのまま時間切れで判定勝利を収めた。",
+    belt: "blue",
+    tags: ["テイクダウン", "スイープ", "ガードワーク"],
+    youtube: "https://youtu.be/TSfYHiHyYtw",
+    thumbnail: "https://img.youtube.com/vi/TSfYHiHyYtw/mqdefault.jpg",
+    date: "2026/04/05"
+  },
+  {
+    id: 8,
+    description: "本柔術試合は、両選手が激しい攻防を繰り広げた展開だったと推測されます。序盤はテイクダウンや引き込みからのガードワーク、中盤はスイープやパスガードの攻防が中心となり、ポイント獲得を目指したことでしょう。最終的には、マウントやバックポジションからのサブミッションを狙う攻防が見られ、ポイント差または一本勝ちで決着がついたと考えられます。",
+    belt: "white",
+    tags: ["スイープ", "パスガード", "チョーク"],
+    youtube: "https://youtu.be/51Fy_gFGjzg",
+    thumbnail: "https://img.youtube.com/vi/51Fy_gFGjzg/mqdefault.jpg",
+    date: "2026/04/05"
+  },
+  {
+    id: 9,
+    description: "試合は序盤、両選手が引き込みからのガードワークで主導権を争い、積極的にスイープやパスガードの機会を伺う展開となった。中盤には一方がニーオンベリーからマウントポジションを奪い、ポイントでリードを広げた。その後、もう一方も粘り強くガードを再構築し反撃を試みたが、最終的にリードしていた選手がバックポジションからのチョークを極め、一本勝ちで試合を終えた。",
+    belt: "white",
+    tags: ["スイープ", "パスガード", "サブミッション"],
+    youtube: "https://youtu.be/PU2d6RAfLXk",
+    thumbnail: "https://img.youtube.com/vi/PU2d6RAfLXk/mqdefault.jpg",
+    date: "2026/04/05"
+  },
+  {
+    id: 10,
+    description: "試合は序盤から激しい組み手争いとなり、一方が引き込みからガードゲームを展開。中盤では、ガードからスイープを仕掛け、ポジションの逆転を試みるも、相手は安定したベースでこれを凌ぐ。終盤には、アドバンテージを重ねた後にパスガードに成功し、リードを奪う。最終的に、ポイント差で優位を保ち、そのままタイムアップで勝利を収めた。",
+    belt: "purple",
+    tags: ["テイクダウン", "スイープ", "パスガード"],
+    youtube: "https://youtu.be/ZASgFKG9nrg",
+    thumbnail: "https://img.youtube.com/vi/ZASgFKG9nrg/mqdefault.jpg",
+    date: "2026/04/05"
+  },
+  {
+    id: 11,
+    description: "この柔術の試合では、まずテイクダウンや引き込みからの攻防で序盤が展開され、中盤はガードワークとパスガード、スイープ、ニーオンベリーなどのポイント獲得技が中心となります。その後、マウントやバックポジションといった優位なポジションを確立し、終盤にはチョークや関節技などのサブミッションを狙う展開が予想されます。最終的な勝敗は、一本勝ちまたはポイント差によって決まります。",
+    belt: "white",
+    tags: ["パスガード", "スイープ", "チョーク"],
+    youtube: "https://youtu.be/dGo1HMU8bUE",
+    thumbnail: "https://img.youtube.com/vi/dGo1HMU8bUE/mqdefault.jpg",
+    date: "2026/04/05"
+  },
+  {
+    id: 12,
+    description: "この試合は、序盤に両選手がスタンドで激しいテイクダウンの攻防を繰り広げた後、グラウンドへ移行しました。中盤では、一方の選手がガードからのスイープを狙いつつ、もう一方がパスガードを試みる攻防が展開されました。終盤にはニーオンベリーやマウントなどのポイントポジションの取り合いがあり、最終的にはIBJJFルールに則り、ポイント差で勝敗が決しました。",
+    belt: "white",
+    tags: ["テイクダウン", "スイープ", "パスガード"],
+    youtube: "https://youtu.be/2Z0IrFvjKXE",
+    thumbnail: "https://img.youtube.com/vi/2Z0IrFvjKXE/mqdefault.jpg",
+    date: "2026/04/05"
+  },
+  {
+    id: 13,
+    description: "試合動画のメタデータが提供されていないため、試合の流れ（序盤・中盤・終盤の展開、勝敗など）を具体的に説明することはできません。",
+    belt: "blue",
+    tags: ["情報不足"],
+    youtube: "https://youtu.be/VnsCsKPpN_8",
+    thumbnail: "https://img.youtube.com/vi/VnsCsKPpN_8/mqdefault.jpg",
+    date: "2026/04/05"
+  }
 ];
 // ============================================================
 
