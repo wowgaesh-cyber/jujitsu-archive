@@ -9,6 +9,7 @@
 """
 
 import argparse
+import json
 import os
 import re
 import subprocess
@@ -17,7 +18,6 @@ import time
 from datetime import date
 
 from google import genai
-from google.genai import types
 
 # ----------------------------------------------------------------
 # 定数
@@ -130,74 +130,82 @@ def get_next_id(html: str) -> int:
 
 
 # ----------------------------------------------------------------
-# yt-dlp でYouTubeメタデータ取得
+# yt-dlp で動画ファイルをダウンロード
 # ----------------------------------------------------------------
-def get_youtube_metadata(youtube_url: str) -> dict:
+def download_video(youtube_url: str, output_path: str) -> str:
     result = subprocess.run(
-        ["yt-dlp", "--dump-json", "--no-download", youtube_url],
+        [
+            "yt-dlp",
+            "--format", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+            "--merge-output-format", "mp4",
+            "--output", output_path,
+            youtube_url,
+        ],
         capture_output=True, text=True,
     )
     if result.returncode != 0:
-        return {}
-    import json
-    data = json.loads(result.stdout)
-    return {
-        "title": data.get("title", ""),
-        "description": data.get("description", ""),
-        "uploader": data.get("uploader", ""),
-        "tags": data.get("tags", []),
-    }
+        sys.exit(f"エラー: yt-dlp による動画ダウンロードに失敗しました。\n{result.stderr}")
+    return output_path
 
 
 # ----------------------------------------------------------------
 # Gemini で解析
 # ----------------------------------------------------------------
 def analyze_with_gemini(youtube_url: str, ruleset: str = "JBJJF") -> dict:
-    import json
-
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         sys.exit("エラー: 環境変数 GEMINI_API_KEY が設定されていません。")
 
-    print("  YouTube メタデータを取得中...")
-    meta = get_youtube_metadata(youtube_url)
-    context_parts = []
-    if meta.get("title"):
-        context_parts.append(f"タイトル: {meta['title']}")
-    if meta.get("uploader"):
-        context_parts.append(f"投稿者: {meta['uploader']}")
-    if meta.get("description"):
-        context_parts.append(f"概要欄:\n{meta['description'][:800]}")
-    if meta.get("tags"):
-        context_parts.append(f"タグ: {', '.join(meta['tags'][:10])}")
-    context = "\n".join(context_parts) if context_parts else "（メタデータなし）"
-
     client = genai.Client(api_key=api_key)
 
-    rules = IBJJF_RULES
-    if ruleset == "ASJJF":
-        rules += "\n" + ASJJF_DIFF
+    video_id = extract_video_id(youtube_url) or "video"
+    tmp_path = os.path.join(os.path.dirname(__file__), f"_tmp_{video_id}.mp4")
 
-    prompt = f"""以下は柔術の試合動画のYouTubeメタデータです。
+    try:
+        print("  動画をダウンロード中...")
+        download_video(youtube_url, tmp_path)
 
-{context}
+        print("  Gemini File API にアップロード中...")
+        uploaded_file = client.files.upload(path=tmp_path)
+
+        print("  ファイル処理待機中...")
+        while uploaded_file.state.name == "PROCESSING":
+            time.sleep(5)
+            uploaded_file = client.files.get(name=uploaded_file.name)
+
+        if uploaded_file.state.name != "ACTIVE":
+            sys.exit(f"エラー: ファイルの処理に失敗しました。状態: {uploaded_file.state.name}")
+
+        rules = IBJJF_RULES
+        if ruleset == "ASJJF":
+            rules += "\n" + ASJJF_DIFF
+
+        prompt = f"""以下は柔術の試合動画です。動画を直接解析してください。
 
 ---
 {rules}
 
 ---
 
-この情報をもとに、以下のJSON形式のみで返答してください。余分なテキストは不要です。
+この動画をもとに、以下のJSON形式のみで返答してください。余分なテキストは不要です。
 
 {{
-  "description": "試合の流れを3〜4文の日本語で説明。序盤・中盤・終盤の展開と勝敗を含める。メタデータが少ない場合は内容から推測して補完する。",
+  "description": "試合の流れを3〜4文の日本語で説明。序盤・中盤・終盤の展開と勝敗を含める。",
   "tags": "最重要タグ3個をカンマ区切りで（例: スイープ,チョーク,ハーフガード）。「柔術」「ブラジリアン柔術」「BJJ」「白帯」「青帯」「紫帯」「茶帯」「黒帯」はタグに含めないこと。"
 }}"""
 
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt,
-    )
+        print("  Gemini で解析中...")
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=[uploaded_file, prompt],
+        )
+
+        client.files.delete(name=uploaded_file.name)
+
+    finally:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+            print("  一時ファイルを削除しました。")
 
     text = response.text.strip()
     text = re.sub(r"^```(?:json)?\s*", "", text)
