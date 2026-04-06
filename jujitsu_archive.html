@@ -377,6 +377,123 @@
 // データ管理：ここのVIDEOS配列を編集してください
 // ============================================================
 const VIDEOS = [
+  {
+    id: 1,
+    description: "序盤は互いに組み手争いからテイクダウンを狙う展開が続く。中盤に黒帯の選手がテイクダウンに成功し、サイドコントロールからニーオンベリーへと移行し、優位なポジションを確立。その後も黒帯の選手がアグレッシブに攻め続け、試合を通して主導権を握った。",
+    belt: "white",
+    tags: ["テイクダウン", "パスガード", "サイドコントロール"],
+    youtube: "https://youtu.be/-HG-pY-K5Xw",
+    thumbnail: "https://img.youtube.com/vi/-HG-pY-K5Xw/mqdefault.jpg",
+    date: "2026/04/06"
+  },
+  {
+    id: 2,
+    description: "試合は、黒帯を着用した選手が序盤に豪快なテイクダウンを決め2点を先制しました。その後、青帯を着用した選手がガードに引き込みましたが、黒帯を着用した選手は落ち着いてパスガードを狙い、中盤でハーフガードからのパスガードに成功し3点を追加、合計5点としました。終盤、青帯を着用した選手はスイープを試みるも、黒帯を着用した選手が安定したトップポジションを維持し続け、タイムアップによりポイントで勝利しました。",
+    belt: "white",
+    tags: ["テイクダウン", "パスガード", "ハーフガード"],
+    youtube: "https://youtu.be/9DYS93yT2lI",
+    thumbnail: "https://img.youtube.com/vi/9DYS93yT2lI/mqdefault.jpg",
+    date: "2026/04/06"
+  },
+  {
+    id: 3,
+    description: "柔術の試合は、両選手が立ち技から始まり、右側の選手が繰り返しガードを引き込む展開が続く。左側の選手は常にトップポジションでガードパスを試みるが、終始ポイントは入らない。レフェリーが度々試合を中断し、膠着状態を警告する中、最終的に両者無得点のまま時間切れとなり、レフェリー判定により左側の選手が勝利した。",
+    belt: "blue",
+    tags: ["ガードプル", "ガードパス攻防", "膠着状態"],
+    youtube: "https://youtu.be/8Y-10wc-jVo",
+    thumbnail: "https://img.youtube.com/vi/8Y-10wc-jVo/mqdefault.jpg",
+    date: "2026/04/06"
+  },
+  {
+    id: 4,
+    description: "The match begins with both competitors on the ground. The white gi quickly establishes side control, applying continuous pressure and seeking opportunities to improve position. Midway through, the white gi successfully transitions to knee-on-belly and then secures mount, holding a dominant position despite the blue gi's defensive efforts. The white gi maintains control until the end, winning by points.",
+    belt: "blue",
+    tags: ["Side control", "Knee on belly", "Mount"],
+    youtube: "https://youtu.be/KU--CY3ToLA",
+    thumbnail: "https://img.youtube.com/vi/KU--CY3ToLA/mqdefault.jpg",
+    date: "2026/04/06"
+  },
+  {
+    id: 5,
+    description: "試合開始直後、右の選手が引き込みからクローズドガードを展開。右の選手は何度かスイープやオモプラータからの腕十字を仕掛けるも、左の選手が堅実に防御し、これらの試みはポイントに繋がらなかった。レフェリーは、左の選手に防衛やバランスの回復に対して数回のアドバンテージを与え、最終的に左の選手がアドバンテージ差で勝利した。",
+    belt: "blue",
+    tags: ["スイープ", "クローズドガード", "オモプラータ"],
+    youtube: "https://youtu.be/xrY9xevKqUA",
+    thumbnail: "https://img.youtube.com/vi/xrY9xevKqUA/mqdefault.jpg",
+    date: "2026/04/06"
+  },
+  {
+    id: 6,
+    description: "試合開始直後、右の選手が引き込みからガードポジションに入り、クローズドガードで相手をコントロール。終始、相手のパスガードの試みを防ぎながら、チャンスを伺った。試合終盤、右の選手がクローズドガードから腕十字固めを仕掛け、相手がタップアウトして勝利を収めた。",
+    belt: "white",
+    tags: ["引き込み", "クローズドガード", "腕十字固め"],
+    youtube: "https://youtu.be/RiLd_xe198w",
+    thumbnail: "https://img.youtube.com/vi/RiLd_xe198w/mqdefault.jpg",
+    date: "2026/04/06"
+  },
+  {
+    id: 7,
+    description: "試合は黒帯選手がガードを引く展開で始まりました。白帯選手はトップのハーフガードでコントロールし、黒帯選手の複数のスイープ試みを効果的に防ぎました。その後、白帯選手はテイクダウンで2点を獲得し、続いてガードパスでサイドコントロール（3点）、そして最終的にマウントポジション（4点）を奪取し、圧倒的なリードを保ったまま動画は終了しました。",
+    belt: "blue",
+    tags: ["ハーフガード", "ガードパス", "マウント"],
+    youtube: "https://youtu.be/TSfYHiHyYtw",
+    thumbnail: "https://img.youtube.com/vi/TSfYHiHyYtw/mqdefault.jpg",
+    date: "2026/04/06"
+  },
+  {
+    id: 8,
+    description: "序盤、ガードポジションを選んだ黒帯緑帯の選手に対し、黒帯白帯の選手はパスガードを試みる展開。中盤以降も黒帯緑帯の選手は積極的にスイープを仕掛けるが、黒帯白帯の選手は冷静に防御し、ポイントを与えません。最終的に一度はスイープが決まりかけるも、黒帯白帯の選手が素早く立ち上がり、試合は0-0のまま終了。積極的なディフェンスとトップコントロールが評価され、審判判定で黒帯白帯の選手が勝利しました。",
+    belt: "white",
+    tags: ["ガードワーク", "パスガード", "スイープディフェンス"],
+    youtube: "https://youtu.be/51Fy_gFGjzg",
+    thumbnail: "https://img.youtube.com/vi/51Fy_gFGjzg/mqdefault.jpg",
+    date: "2026/04/06"
+  },
+  {
+    id: 9,
+    description: "序盤から両者積極的な組み手争いを展開。中盤、オレンジショーツの選手がシングルレッグから見事なテイクダウンを奪い、さらにバックポジションを確保して優位に立った。その後もスタンドでの攻防を続け、最後まで主導権を握ったオレンジショーツの選手がポイント差で勝利した。",
+    belt: "white",
+    tags: ["テイクダウン", "バックコントロール", "ノーギ"],
+    youtube: "https://youtu.be/PU2d6RAfLXk",
+    thumbnail: "https://img.youtube.com/vi/PU2d6RAfLXk/mqdefault.jpg",
+    date: "2026/04/06"
+  },
+  {
+    id: 10,
+    description: "白帯の選手が下からの攻めを試みる中、紫帯の選手は上から安定したトップコントロールを維持し続けた。試合中盤から終盤にかけて、紫帯の選手は積極的にガードパスを狙い、着実にポイントを重ねていった。最終的に、紫帯の選手がポイント差で勝利を収めた。",
+    belt: "purple",
+    tags: ["ガードパス", "トップコントロール", "ポイント勝ち"],
+    youtube: "https://youtu.be/ZASgFKG9nrg",
+    thumbnail: "https://img.youtube.com/vi/ZASgFKG9nrg/mqdefault.jpg",
+    date: "2026/04/06"
+  },
+  {
+    id: 11,
+    description: "試合はスタンドでの組み手争いで始まり、中盤に白のラッシュガードの選手がダブルレッグテイクダウンを成功させ、グラウンドで攻勢に出ました。その後、試合はスタンドに戻され、両者ともに決定打を欠いたまま時間切れとなりました。結果、白のラッシュガードの選手がテイクダウンのポイントにより勝利しました。",
+    belt: "white",
+    tags: ["テイクダウン", "立ち技", "グラップリング"],
+    youtube: "https://youtu.be/dGo1HMU8bUE",
+    thumbnail: "https://img.youtube.com/vi/dGo1HMU8bUE/mqdefault.jpg",
+    date: "2026/04/06"
+  },
+  {
+    id: 12,
+    description: "試合は、白帯の選手が引き込みからクローズドガードを取り、終始、スイープや三角絞めなどの攻撃を仕掛けました。対する黒帯の選手は、ガードを解除しようと試みましたが、白帯の選手の粘り強いガードに阻まれました。試合終了間際にも白帯の選手が三角絞めを狙い、最終的に白帯の選手が勝者となりました。",
+    belt: "white",
+    tags: ["クローズドガード", "三角絞め", "スイープ"],
+    youtube: "https://youtu.be/2Z0IrFvjKXE",
+    thumbnail: "https://img.youtube.com/vi/2Z0IrFvjKXE/mqdefault.jpg",
+    date: "2026/04/06"
+  },
+  {
+    id: 13,
+    description: "試合は両者グラウンドから始まり、白帯の選手がスイープで立ち上がります。その後、白帯の選手は立ち技からのテイクダウンを成功させ、ニーオンベリーでポイントを獲得するなど、終始優位な展開を築きました。複数回のテイクダウンとグラウンドコントロールでポイントを重ね、白帯の選手が試合に勝利しました。",
+    belt: "blue",
+    tags: ["スイープ", "テイクダウン", "ニーオンベリー"],
+    youtube: "https://youtu.be/VnsCsKPpN_8",
+    thumbnail: "https://img.youtube.com/vi/VnsCsKPpN_8/mqdefault.jpg",
+    date: "2026/04/06"
+  }
 ];
 // ============================================================
 
