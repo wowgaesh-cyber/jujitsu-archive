@@ -18,7 +18,6 @@ import time
 from datetime import date
 
 from google import genai
-from google.genai import types
 
 # ----------------------------------------------------------------
 # 定数
@@ -131,6 +130,25 @@ def get_next_id(html: str) -> int:
 
 
 # ----------------------------------------------------------------
+# yt-dlp で YouTube メタデータ取得
+# ----------------------------------------------------------------
+def get_youtube_metadata(youtube_url: str) -> dict:
+    result = subprocess.run(
+        ["yt-dlp", "--dump-json", "--no-download", youtube_url],
+        capture_output=True, text=True,
+    )
+    if result.returncode != 0:
+        return {}
+    data = json.loads(result.stdout)
+    return {
+        "title": data.get("title", ""),
+        "description": data.get("description", ""),
+        "uploader": data.get("uploader", ""),
+        "tags": data.get("tags", []),
+    }
+
+
+# ----------------------------------------------------------------
 # Gemini で解析
 # ----------------------------------------------------------------
 def analyze_with_gemini(youtube_url: str, ruleset: str = "JBJJF") -> dict:
@@ -138,55 +156,64 @@ def analyze_with_gemini(youtube_url: str, ruleset: str = "JBJJF") -> dict:
     if not api_key:
         sys.exit("エラー: 環境変数 GEMINI_API_KEY が設定されていません。")
 
+    print("  YouTube メタデータを取得中...")
+    meta = get_youtube_metadata(youtube_url)
+    context_parts = []
+    if meta.get("title"):
+        context_parts.append(f"タイトル: {meta['title']}")
+    if meta.get("uploader"):
+        context_parts.append(f"投稿者: {meta['uploader']}")
+    if meta.get("description"):
+        context_parts.append(f"概要欄:\n{meta['description'][:800]}")
+    if meta.get("tags"):
+        context_parts.append(f"タグ: {', '.join(meta['tags'][:10])}")
+    context = "\n".join(context_parts) if context_parts else "（メタデータなし）"
+
     client = genai.Client(api_key=api_key)
 
     rules = IBJJF_RULES
     if ruleset == "ASJJF":
         rules += "\n" + ASJJF_DIFF
 
-    prompt = f"""以下は柔術の試合動画です。動画を直接解析してください。
+    prompt = f"""以下は柔術の試合動画のYouTubeメタデータです。
+
+{context}
 
 ---
 {rules}
 
 ---
 
-この動画をもとに、以下のJSON形式のみで返答してください。余分なテキストは不要です。
+この情報をもとに、以下のJSON形式のみで返答してください。余分なテキストは不要です。
 
 {{
-  "description": "試合の流れを3〜4文の日本語で説明。序盤・中盤・終盤の展開と勝敗を含める。",
+  "description": "試合の流れを3〜4文の日本語で説明。序盤・中盤・終盤の展開と勝敗を含める。メタデータが少ない場合は内容から推測して補完する。",
   "tags": "最重要タグ3個をカンマ区切りで（例: スイープ,チョーク,ハーフガード）。「柔術」「ブラジリアン柔術」「BJJ」「白帯」「青帯」「紫帯」「茶帯」「黒帯」はタグに含めないこと。"
 }}"""
 
     print("  Gemini で解析中...")
-    contents = [
-        types.Part(
-            file_data=types.FileData(
-                file_uri=youtube_url,
-                mime_type="video/*"
-            )
-        ),
-        types.Part(text=prompt)
-    ]
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=contents,
-    )
-
-    text = response.text.strip()
-    text = re.sub(r"^```(?:json)?\s*", "", text)
-    text = re.sub(r"\s*```$", "", text)
-
     try:
-        data = json.loads(text)
-    except json.JSONDecodeError as e:
-        sys.exit(f"エラー: Geminiの応答をJSONとして解析できませんでした。\n{text}\n{e}")
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
+        )
 
-    tags = [t.strip() for t in data["tags"].split(",") if t.strip()]
-    return {
-        "description": data["description"].strip(),
-        "tags": tags,
-    }
+        text = response.text.strip()
+        text = re.sub(r"^```(?:json)?\s*", "", text)
+        text = re.sub(r"\s*```$", "", text)
+
+        data = json.loads(text)
+        tags = [t.strip() for t in data["tags"].split(",") if t.strip()]
+        return {
+            "description": data["description"].strip(),
+            "tags": tags,
+        }
+    except Exception as e:
+        print(f"  警告: Gemini解析に失敗しました。手動入力が必要です。({e})")
+        return {
+            "description": "解析失敗のため手動で入力してください",
+            "tags": [],
+        }
 
 
 # ----------------------------------------------------------------
