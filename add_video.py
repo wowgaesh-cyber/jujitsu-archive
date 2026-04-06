@@ -18,6 +18,7 @@ import time
 from datetime import date
 
 from google import genai
+from google.genai import types
 
 # ----------------------------------------------------------------
 # 定数
@@ -158,12 +159,18 @@ def analyze_with_gemini(youtube_url: str, ruleset: str = "JBJJF") -> dict:
 }}"""
 
     print("  Gemini で解析中...")
+    contents = [
+        types.Part(
+            file_data=types.FileData(
+                file_uri=youtube_url,
+                mime_type="video/*"
+            )
+        ),
+        types.Part(text=prompt)
+    ]
     response = client.models.generate_content(
         model="gemini-2.5-flash",
-        contents=[
-            {"video_url": youtube_url},
-            {"text": prompt},
-        ],
+        contents=contents,
     )
 
     text = response.text.strip()
