@@ -190,7 +190,11 @@ def analyze_with_gemini(youtube_url: str, ruleset: str = "JBJJF") -> dict:
         text = re.sub(r"\s*```$", "", text)
 
         data = json.loads(text)
-        tags = [t.strip() for t in data["tags"].split(",") if t.strip()]
+        raw_tags = data["tags"]
+        if isinstance(raw_tags, list):
+            tags = [t.strip() for t in raw_tags if isinstance(t, str) and t.strip()]
+        else:
+            tags = [t.strip() for t in str(raw_tags).split(",") if t.strip()]
         return {
             "description": data["description"].strip(),
             "tags": tags,
