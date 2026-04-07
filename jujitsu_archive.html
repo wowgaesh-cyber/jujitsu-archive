@@ -376,7 +376,134 @@
 // ============================================================
 // データ管理：ここのVIDEOS配列を編集してください
 // ============================================================
-const VIDEOS = [];
+const VIDEOS = [
+  {
+    id: 1,
+    description: "試合は黒道着の選手が引き込みガードポジションを取る形で開始し、白道着の選手は終始上からパスガードを試みた。中盤にかけても白道着の選手がプレッシャーをかけ続けるが、黒道着の選手は下からしっかりとガードを維持し続けた。試合終盤、黒道着の選手が下から腕の関節技を仕掛け、白道着の選手がタップアウトにより黒道着の選手の勝利となった。",
+    belt: "blue",
+    tags: ["タップアウト"],
+    youtube: "https://youtu.be/ne6YvFtBwcA",
+    thumbnail: "https://img.youtube.com/vi/ne6YvFtBwcA/mqdefault.jpg",
+    date: "2026/04/07"
+  },
+  {
+    id: 2,
+    description: "序盤は両者立ち技で攻防し、青道着の選手がテイクダウンを奪うも、黒道着の選手がすぐにスイープで返し拮抗した展開となる。中盤、青道着の選手が再びテイクダウンに成功し、ハーフガードからパスガードを試みる。終盤は青道着の選手が優位なポジションを維持し続け、さらにテイクダウンを追加してリードを広げた結果、ポイント差で勝利した。",
+    belt: "white",
+    tags: ["ポイント勝利"],
+    youtube: "https://youtu.be/-HG-pY-K5Xw",
+    thumbnail: "https://img.youtube.com/vi/-HG-pY-K5Xw/mqdefault.jpg",
+    date: "2026/04/07"
+  },
+  {
+    id: 3,
+    description: "試合は青道着の選手がガードを引いて開始し、その後、黒道着の選手がテイクダウンを試みる展開となった。中盤、青道着の選手がスイープで2ポイント、続けてバックポジションからの4ポイントを獲得し、優位に立つ。終盤には再びスイープで2ポイントを加え、試合終了まで優勢を保ち、ポイント差で勝利した。",
+    belt: "white",
+    tags: ["ポイント勝利"],
+    youtube: "https://youtu.be/9DYS93yT2lI",
+    thumbnail: "https://img.youtube.com/vi/9DYS93yT2lI/mqdefault.jpg",
+    date: "2026/04/07"
+  },
+  {
+    id: 4,
+    description: "試合はスタンディングから始まり、青帯の選手がすぐに引き込みガードポジションに入ります。トップの選手はガードをパスしようと試みますが、青帯の選手はディフェンシブなガードでそれを防ぎ続けます。試合中、両者ともにポイントやアドバンテージを稼ぐことができず、膠着状態が続きます。最終的に、サブミッションやポイントによる決着はなく、レフェリーの裁定に持ち込まれました。",
+    belt: "blue",
+    tags: ["レフェリー裁定"],
+    youtube: "https://youtu.be/8Y-10wc-jVo",
+    thumbnail: "https://img.youtube.com/vi/8Y-10wc-jVo/mqdefault.jpg",
+    date: "2026/04/07"
+  },
+  {
+    id: 5,
+    description: "序盤から白道着の選手が優勢に試合を進め、青道着の選手は亀の状態での防御が続きました。中盤から終盤にかけて白道着の選手はバックポジションやサブミッションの機会を伺い続け、試合終了間際に両フックによるバックコントロールを試みましたが、スコアボードにはポイントが記録されずに試合終了となりました。",
+    belt: "blue",
+    tags: [],
+    youtube: "https://youtu.be/KU--CY3ToLA",
+    thumbnail: "https://img.youtube.com/vi/KU--CY3ToLA/mqdefault.jpg",
+    date: "2026/04/07"
+  },
+  {
+    id: 6,
+    description: "試合は青道着の選手が序盤にガードを引き込み、攻勢に出ました。青道着の選手はスイープを成功させ、さらにアドバンテージポイントを獲得し優位に立ちます。一方、黄道着の選手は度重なるペナルティを受け、終盤にも青道着の選手が追加のスイープを決め、ポイント差で青道着の選手が勝利しました。",
+    belt: "blue",
+    tags: ["ポイント勝利"],
+    youtube: "https://youtu.be/xrY9xevKqUA",
+    thumbnail: "https://img.youtube.com/vi/xrY9xevKqUA/mqdefault.jpg",
+    date: "2026/04/07"
+  },
+  {
+    id: 7,
+    description: "試合は、右の黒道着の選手が繰り返しガードを引き、下からの攻めを試みる展開で始まりました。中盤にかけても右の選手はクローズドガードを維持し、スイープやサブミッションを狙いました。終盤、右の選手はアームバーを仕掛け、左の選手の腕を伸ばしきったところでタップアウトを奪い、勝利しました。",
+    belt: "white",
+    tags: ["タップアウト"],
+    youtube: "https://youtu.be/RiLd_xe198w",
+    thumbnail: "https://img.youtube.com/vi/RiLd_xe198w/mqdefault.jpg",
+    date: "2026/04/07"
+  },
+  {
+    id: 8,
+    description: "序盤は白い道着の選手が上からクローズドガードをコントロールするが、ポイントは動かず。中盤、黒い道着の選手がスイープを成功させて2点を獲得し優勢に立つ。その後、黒い道着の選手が上のポジションを維持し、ポイント差を保ったまま試合が終了した。",
+    belt: "blue",
+    tags: ["ポイント勝利"],
+    youtube: "https://youtu.be/TSfYHiHyYtw",
+    thumbnail: "https://img.youtube.com/vi/TSfYHiHyYtw/mqdefault.jpg",
+    date: "2026/04/07"
+  },
+  {
+    id: 9,
+    description: "柔術の試合は、両選手が低い姿勢でグラップリングを試みる展開で始まった。黒道着に黄色帯を巻いた選手がテイクダウンを成功させ2ポイントを獲得したが、直後に相手の黒道着選手もスイープを決め、2-2の同点となる。5分の試合時間が終了したが、決着はつかなかった。",
+    belt: "white",
+    tags: [],
+    youtube: "https://youtu.be/51Fy_gFGjzg",
+    thumbnail: "https://img.youtube.com/vi/51Fy_gFGjzg/mqdefault.jpg",
+    date: "2026/04/07"
+  },
+  {
+    id: 10,
+    description: "試合序盤、両選手は積極的に組み合い、ポジションを狙う。中盤、白道着の選手が相手をテイクダウンし、バックポジションを確保して4点を獲得する。その後、オレンジ道着の選手はバックポジションからの脱出に成功し、試合は再びスタンドから再開された。終盤にかけて両者とも決定的な技は出せず、白道着の選手がポイント差で勝利した。",
+    belt: "white",
+    tags: ["ポイント勝利"],
+    youtube: "https://youtu.be/PU2d6RAfLXk",
+    thumbnail: "https://img.youtube.com/vi/PU2d6RAfLXk/mqdefault.jpg",
+    date: "2026/04/07"
+  },
+  {
+    id: 11,
+    description: "試合は、黒道着の選手が下からスイープを試みる形で始まり、白道着の選手は上からコントロールを維持しています。試合中盤では、白道着の選手がスイープを仕掛けられますが、粘り強く体勢を立て直し、トップポジションをキープ。黒道着の選手はガードから何度か仕掛けますが、決定打には至りませんでした。最終的に、白道着の選手が優勢を保ち、ポイントで勝利を収めました。",
+    belt: "purple",
+    tags: ["ポイント勝利"],
+    youtube: "https://youtu.be/ZASgFKG9nrg",
+    thumbnail: "https://img.youtube.com/vi/ZASgFKG9nrg/mqdefault.jpg",
+    date: "2026/04/07"
+  },
+  {
+    id: 12,
+    description: "序盤、両選手は慎重な立ち上がりで互いにグリップを狙い、白い道着の選手がテイクダウンを成功させ、続けてバックコントロールの体勢に移行しポイントを獲得しました。その後、黒白の道着の選手が立ち上がり試合は再開され、再び白い道着の選手がテイクダウンを奪い優位なポジションを確保します。試合終了まで大きな動きはありませんでしたが、白い道着の選手が獲得したポイントを守り切り、ポイントで勝利しました。",
+    belt: "white",
+    tags: ["ポイント勝利"],
+    youtube: "https://youtu.be/dGo1HMU8bUE",
+    thumbnail: "https://img.youtube.com/vi/dGo1HMU8bUE/mqdefault.jpg",
+    date: "2026/04/07"
+  },
+  {
+    id: 13,
+    description: "試合は白道着の選手が上からクローズドガードで始まりました。白道着の選手はガードパスを試み、黒道着の選手はスイープや三角絞めを狙い続けました。試合終盤に黒道着の選手がスイープを成功させてポイントを獲得し、最終的に黒道着の選手が勝利しました。",
+    belt: "white",
+    tags: ["ポイント勝利"],
+    youtube: "https://youtu.be/2Z0IrFvjKXE",
+    thumbnail: "https://img.youtube.com/vi/2Z0IrFvjKXE/mqdefault.jpg",
+    date: "2026/04/07"
+  },
+  {
+    id: 14,
+    description: "試合はグラウンドからの攻防で始まり、序盤に白道着の選手が立ち上がる場面も見られました。その後、黒道着の選手がガードからのスイープを成功させ、2ポイントを獲得してリード。一度立ち上がって再開した後も、黒道着の選手が再びスイープを決めてさらに2ポイントを追加し、計4ポイントをリードした状態で映像は終了しています。",
+    belt: "blue",
+    tags: ["ポイント勝利"],
+    youtube: "https://youtu.be/VnsCsKPpN_8",
+    thumbnail: "https://img.youtube.com/vi/VnsCsKPpN_8/mqdefault.jpg",
+    date: "2026/04/07"
+  }
+];
 // ============================================================
 
 const YOUTUBE_API_KEY = "__YOUTUBE_API_KEY__";
